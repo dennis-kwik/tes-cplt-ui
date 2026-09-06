@@ -1,0 +1,23 @@
+# handbook/03-input-analysis.md
+
+# 3. Cara Membaca Input Visual dan Excel
+
+## 3.1 Visual inspection
+* Baca judul, kode modul, section band, label, tanda mandatory, placeholder, sample value, border, alignment, warna, icon, selection state, dan grouping[cite: 1].
+* Periksa elemen kecil: pencil, eye, calendar, search, row checkbox, sort marker, pagination, helper text, dan empty region yang mungkin merupakan container[cite: 1].
+* Bedakan informasi yang terlihat dengan inferensi[cite: 1]. Catat evidence visual dan confidence bila diperlukan[cite: 1].
+* Lakukan second-pass verification sebelum menyusun component inventory[cite: 1].
+
+## 3.2 Excel inspection
+* Scan setiap sheet, termasuk hidden sheet bila dapat diakses[cite: 1].
+* Deteksi beberapa desain dalam satu sheet melalui dark header, merged title, whitespace, border, dan label Main Page/Add/Edit/Detail/Popup/Tab[cite: 1].
+* Pertahankan grouping berdasarkan kode modul, bukan berdasarkan jenis artefak[cite: 1].
+* Jangan menganggap cell kosong tidak penting[cite: 1]. Layout, merged cells, shape, dan visual grouping dapat membawa makna[cite: 1].
+
+## 3.3 Evidence classification
+* CONFIRMED: Diberikan eksplisit oleh user atau dokumen approved[cite: 1]. Tuliskan sebagai requirement; sertakan source[cite: 1].
+* OBSERVED: Terlihat pada UI/existing system tetapi belum dikonfirmasi sebagai target[cite: 1]. Tuliskan sebagai current state[cite: 1].
+* INFERRED: Kesimpulan logis dari beberapa evidence[cite: 1]. Jelaskan dasar inferensi; tandai untuk review[cite: 1].
+* PROPOSED: Rekomendasi teknis atau future-proof design[cite: 1]. Jangan tulis sebagai business fact[cite: 1].
+* ASSUMPTION: Diperlukan untuk melengkapi spec tetapi belum diketahui[cite: 1]. Kuning; ID; reason; impact; confirm by[cite: 1].
+* OPEN: Belum dapat diputuskan[cite: 1]. Masukkan Open Question dan impact[cite: 1].
