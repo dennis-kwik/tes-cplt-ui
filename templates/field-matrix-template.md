@@ -1,0 +1,1 @@
+| Component ID | Screen | Section | Field | Type | M/O/C/System | Data Type | Min/Max | Format | Default | State | Validation | Event | Message | Permission | Data | Assumption |
