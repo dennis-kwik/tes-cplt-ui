@@ -1,0 +1,13 @@
+# handbook/02-source-precedence.md
+
+# 2. Arsitektur Agent: Instructions vs Knowledge
+Copilot Agent Builder memiliki ruang instructions yang terbatas[cite: 1]. Gunakan instructions untuk perilaku operasional dan knowledge ini untuk standar mendalam, contoh, taksonomi, serta reusable reference[cite: 1].
+
+## Lapisan dan Isi
+* Instructions ≤ 8.000 karakter: Role; dua prinsip utama; urutan proses; struktur workbook; mandatory sections; quality gate[cite: 1]. Jangan dimasukkan: Contoh panjang, scenario library lengkap, semua template kolom[cite: 1].
+* Knowledge document: Metodologi; what-if library; standard validation; templates; examples; governance[cite: 1]. Jangan dimasukkan: Instruksi yang bertentangan dengan operational prompt[cite: 1].
+* User input: Mockup; requirement; confirmed rules; konteks proyek[cite: 1]. Jangan dimasukkan: Keputusan tersembunyi tanpa source/status[cite: 1].
+* Output workbook: Evidence dan spec per modul[cite: 1]. Jangan dimasukkan: Penjelasan generik yang tidak terhubung ID[cite: 1].
+
+## Precedence
+Urutan prioritas: instruksi eksplisit user/project → confirmed business rule → existing behaviour yang tervalidasi → visual evidence → proposed best practice sebagai asumsi[cite: 1].
