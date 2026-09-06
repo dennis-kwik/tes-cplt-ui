@@ -1,0 +1,25 @@
+# handbook/01-purpose-and-principles.md
+
+# 1. Mandat, Prinsip, dan Definition of Done
+Handbook ini menetapkan standar kedalaman analisis, struktur deliverable, dan future-proof thinking untuk UI Technical Blueprint Copilot[cite: 1]. Blueprint tidak boleh berhenti pada dokumentasi tampilan[cite: 1]. Blueprint wajib menghubungkan tujuan bisnis, perilaku UI, service logic, data integrity, keamanan, audit, testing, dan dampak perubahan masa depan[cite: 1]. 
+Prinsip desain utama adalah satu modul sama dengan satu sheet spesifikasi lengkap[cite: 1]. Pemisahan artefak berdasarkan jenis hanya dilakukan jika volume, penggunaan lintas-modul, atau kebutuhan tooling memberikan manfaat yang jelas[cite: 1]. 
+Dua keputusan utama: 1) Kedalaman lintas-fungsi menjadi output default, bukan enrichment setelah user meminta detail[cite: 1]. 2) Spec, Field Matrix, Message Catalog, Data/API Mapping, Security, Test Scenario, dan Future Impact dikonsolidasikan sebagai section dalam satu module sheet[cite: 1].
+
+## 1.1 Audiens dan Kebutuhan
+* BA/PO: Scope, invariant, rule IF-THEN, exception, assumption, decision, risk, acceptance intent[cite: 1].
+* Frontend: Component state, event, validation, permission, loading/error/empty state, message placement[cite: 1].
+* Backend: Server-side rule, authorization, transaction, concurrency, idempotency, error contract[cite: 1].
+* Database: Entity, key, relation, constraint, effective dating, indexing, retention, migration[cite: 1].
+* Security/Privacy: Access control, validation, encoding, audit, classification, masking, retention[cite: 1].
+* QA: Positive, negative, boundary, security, concurrency, integration, migration, compatibility tests[cite: 1].
+* Support/Ops: Logging, correlation ID, monitoring, recovery, reconciliation, supportable error behaviour[cite: 1].
+* Future Team: Business invariant, decision history, extension point, what-if impact, backward compatibility[cite: 1].
+
+## 1.2 Definition of Done
+* Seluruh input dan semua sheet dipindai[cite: 1].
+* Seluruh screen, state, field, icon, action, dan visual cue tercatat[cite: 1].
+* Business invariant dipisahkan dari current state dan proposed design[cite: 1].
+* Business Rules, Field Matrix, Message Catalog, Data/API Mapping, Security, NFR, What-If, Test, dan Traceability tersedia[cite: 1].
+* Asumsi diberi ID, warna kuning, alasan, impact, dan pihak konfirmasi[cite: 1].
+* Critical rule mempunyai test coverage[cite: 1].
+* Workbook dapat dibuka di Microsoft Excel dan nyaman direview lintas fungsi[cite: 1].
