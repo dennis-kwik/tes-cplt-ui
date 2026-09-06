@@ -1,0 +1,20 @@
+# handbook/04-module-screen-state.md
+
+# 4. Metode Discovery Modul, Screen, State, dan Komponen
+
+## 4.1 Output discovery
+* Module: Code, name, purpose, owner, entity, scope, dependency[cite: 1].
+* Screen: Screen ID, name, mode, entry/exit, related screen[cite: 1].
+* State: Initial, loading, add, edit, view, dirty, invalid, saving, error, conflict, unauthorized, not found[cite: 1].
+* Component: ID, label, type, screen, section, parent/container[cite: 1].
+* Action: Trigger, precondition, permission, validation, result, error, navigation[cite: 1].
+* Data: Source of truth, attribute, type, constraint, lifecycle[cite: 1].
+
+## 4.2 State inventory
+* Initial: screen first render dan default values[cite: 1].
+* Loading: skeleton/spinner, disabled actions, timeout behaviour[cite: 1].
+* Add/Edit/View: field editability dan permission berbeda[cite: 1].
+* Dirty: unsaved changes dan navigation guard[cite: 1].
+* Saving: double-submit prevention dan idempotency[cite: 1].
+* Error/Conflict: recovery path, reload, retry, dan data preservation[cite: 1].
+* Unauthorized/Not Found: secure handling tanpa information leakage[cite: 1].
