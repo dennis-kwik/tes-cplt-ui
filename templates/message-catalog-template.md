@@ -1,1 +1,0 @@
-| Message ID | Type | Trigger | Text | Placement | Component | Next Action | Logging | Assumption |
