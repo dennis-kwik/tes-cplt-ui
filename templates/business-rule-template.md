@@ -1,0 +1,1 @@
+| Rule ID | Name | Source/Status | IF/Trigger | AND/Precondition | THEN/Result | ELSE/Exception | Priority | Related IDs |
