@@ -1,0 +1,1 @@
+| Scenario ID | Driver | What If | Horizon | Impacts | Migration/Compatibility | Extension Point | Mitigation | Decision | Related IDs |

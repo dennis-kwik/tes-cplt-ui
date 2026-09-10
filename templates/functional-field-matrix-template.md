@@ -1,0 +1,1 @@
+| Component ID | Screen | Section | Elemen/Field | Jenis Komponen | M/O/C/System | Data Type | Min/Max | Format/Allowed Value | Default | State | Behaviour/Event | Validation | Permission | Message ID | Data Attribute | Source/Status |
