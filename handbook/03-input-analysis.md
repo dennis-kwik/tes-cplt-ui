@@ -21,6 +21,29 @@
 * ASSUMPTION: Diperlukan untuk melengkapi spec tapi belum diketahui — kuning; ID; reason; impact; confirm by.
 * OPEN: Belum dapat diputuskan — masuk Assumption/Decision/Risk/Open Question sheet.
 
+## 3.3b Ambiguity Handling (WAJIB — root cause kegagalan paling sering ditemukan)
+Requirement dari user (terutama requirement teks bebas, bukan mockup visual presisi) sering punya frasa yang secara gramatikal bisa dibaca >1 cara. Contoh nyata: "job nya nanti bentuk pdf per 1 page = 1 faktur" bisa dibaca (a) "1 file PDF, tiap halaman = 1 faktur" ATAU (b) "1 file PDF per faktur (N file terpisah)". Kedua bacaan itu VALID secara gramatikal.
+**Aturan wajib:** begitu agent mendeteksi frasa dengan >1 tafsiran valid, JANGAN memilih salah satu secara diam-diam dan menuliskannya seolah itu satu-satunya kebenaran. Sebagai gantinya:
+1. Tulis KEDUA (atau semua) tafsiran secara eksplisit di sheet `Assumption_Decision_Risk_Open` sebagai 1 entry Decision, dengan opsi A/B/dst beserta dampak masing-masing ke Data_API, UX, Message Catalog, Test Scenario.
+2. Tulis juga 1 entry terkait di `What_If_Critical_Challenge` (Section B) yang menantang tafsiran ini secara eksplisit.
+3. Pilih SATU tafsiran sebagai "default sementara" untuk keperluan drafting spec lainnya, tapi tandai eksplisit sebagai default sementara (bukan final).
+4. **Konsistensi lintas-sheet WAJIB**: begitu default sementara dipilih, SEMUA sheet lain yang menyinggung topik itu (Business Rules, Field Matrix, Message Catalog, Data_API, Test Scenario) WAJIB memakai tafsiran default yang SAMA — dilarang keras 1 sheet memakai tafsiran A dan sheet lain memakai tafsiran B tanpa disadari. Ini yang paling sering luput karena workbook besar dengan banyak sheet — lihat 20 (Self-Audit Pass) untuk cara mengecek ini sebelum finalisasi.
+
+## 3.3c Configurability Elicitation — HARD STOP (WAJIB)
+Kalau user meminta mode "highly configurable" TAPI tidak memberi informasi apapun (satu kata pun) soal: apa yang perlu configurable, siapa yang mengelola config, atau dimensi scope-nya — **PROSES BERHENTI (hard stop)**. Jangan lanjut generate dengan asumsi sendiri untuk keputusan fondasi ini. Ajukan pertanyaan eksplisit dulu:
+* Field/parameter apa saja yang perlu configurable (bukan hardcode)?
+* Siapa yang mengelola configuration tsb, di level scope apa (lihat 3.3d)?
+* Ada precedent/pola existing yang harus diikuti?
+Beda dari Assumption biasa (field-level, mudah dikoreksi belakangan) — keputusan scope configurability adalah fondasi struktur data model, salah di awal menjalar ke semua sheet turunan.
+
+## 3.3d Struktur Scope Configurability — Generik (WAJIB, prinsip Highly Configurable)
+"Highly Configurable" TIDAK berarti row-explosion lebih banyak — kategori masalah berbeda. Polanya:
+* **Master Configuration Engine**: nilai yang berpotensi beda per konteks organisasi (pilihan dropdown, isi notes, batas validasi/range, visibility field) TIDAK hardcode di Business Rule/Field Matrix, melainkan direferensikan ke entity Config Master terpisah dengan dimensi scope GENERIK (Scope Level 1/2/3/... — jangan asumsikan struktur spesifik seperti PT/RSO/Area kecuali user eksplisit menyebutkannya).
+* Level scope tertinggi (pusat) mengelola Config Master; level di bawah inherit/override sesuai desain yang dikonfirmasi user.
+* Transaction screen query Config Master sesuai scope user login — tanpa logic hardcode "IF Area=X THEN...".
+* Berlaku ke semua jenis nilai berpotensi beda per organisasi: pilihan konten, parameter validasi, bahkan visibility/mandatory field.
+* Field Matrix yang menulis nilai tetap di Min/Max/Format/Default: tanyakan dulu "genuinely fixed atau configurable per scope?" — kalau ambigu, masuk 3.3c.
+
 ## 3.4 Aturan wajib sheet "Desain UI" — WAJIB 2 SHEET PER UI DESIGN (snapshot asli + redraw agent)
 Setiap Desain UI yang terdeteksi WAJIB menghasilkan **2 sheet terpisah**, bukan 1:
 1. **`[KODE]_[Screen]_Snapshot`** — bukti asli input, SELALU berupa gambar/foto embed (`ws.add_image()`). IF input berupa Excel (cell design) THEN render/screenshot area desain tersebut jadi gambar dulu (bukan copy sheet mentah) sebelum di-embed — supaya konsisten format snapshot untuk semua tipe input. IF input gambar/PDF/Word yang mengandung gambar mockup THEN embed gambar asli (byte asli) apa adanya.
@@ -32,7 +55,8 @@ Setiap Desain UI yang terdeteksi WAJIB menghasilkan **2 sheet terpisah**, bukan 
 * **Excel (cell design)**: area desain di-screenshot/render jadi gambar untuk sheet Snapshot; dipakai juga sebagai acuan detail untuk sheet Redrawn.
 * **PDF**: tiap halaman yang mengandung mockup dirender jadi gambar (rasterize per halaman), diperlakukan sama seperti input gambar.
 * **Word (.docx)**: ekstrak gambar mockup yang di-embed di dalam dokumen (diperlakukan seperti input gambar) DAN ekstrak teks requirement/business rule tertulis di dokumen (jadi input tambahan untuk Business Rules/Assumption, BUKAN untuk redraw UI).
-* **Markdown (.md)**: BUKAN sumber visual — dipakai sebagai input terstruktur pelengkap (business rule yang sudah ditulis manusia, question/reference bank per tipe komponen). Isinya di-parse dan dipetakan ke Business Rules/Field Matrix/Critical_Challenge_QnA sesuai konten; tidak menghasilkan sheet Desain UI.
+* **Markdown (.md)**: BUKAN sumber visual — dipakai sebagai input terstruktur pelengkap (business rule yang sudah ditulis manusia, question/reference bank per tipe komponen). Isinya di-parse dan dipetakan ke Business Rules/Field Matrix/What_If_Critical_Challenge sesuai konten; tidak menghasilkan sheet Desain UI.
+* **Teks chat murni (tanpa file apapun)**: TIDAK ADA bukti visual sama sekali. Sheet `_Snapshot` TETAP WAJIB dibuat, tapi isinya bukan gambar — melainkan REPRODUKSI TEKS ASLI requirement user (bukan parafrase/ringkasan bebas) ditempatkan rapi di cell, plus label eksplisit "TIDAK ADA file/gambar visual diupload untuk Desain UI ini — sheet ini berisi requirement asli sebagai bukti tekstual". Ini BEDA dari sekadar menulis 1 kalimat catatan generik "tidak ada evidence" — requirement asli harus benar-benar direproduksi supaya reviewer bisa membandingkan langsung ke sheet Redrawn tanpa perlu scroll ke chat asal.
 
 ## 3.5 Aturan teknis cell-drawing (WAJIB — dipakai di SETIAP sheet `[KODE]_[Screen]_Redrawn`)
 Berlaku untuk sheet Redrawn yang WAJIB selalu dibuat (lihat 3.4). Ini SEMUA wajib dieksekusi sebagai kode (openpyxl), bukan sekadar disebut:

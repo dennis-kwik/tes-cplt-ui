@@ -15,10 +15,9 @@
    * `Overview_Scope`
    * `Actor_Role_Permission`
    * `Data_API`
-   * `What_If`
+   * `What_If_Critical_Challenge` — gabungan What-If Matrix (Section A) + Critical Challenge QnA/devil's advocate (Section B), lihat handbook 14
    * `Test_Scenario`
    * `Assumption_Decision_Risk_Open`
-   * `Critical_Challenge_QnA` — devil's advocate, lihat handbook 19
 
 Section yang TIDAK dibuat: Integration/Dependency, Security/Privacy/Audit, Concurrency/Transaction/Idempotency, NFR, Traceability (lihat 02 untuk alasan).
 
@@ -30,6 +29,7 @@ Section yang TIDAK dibuat: Integration/Dependency, Security/Privacy/Audit, Concu
 * Dark blue/black: Section header.
 * Gray: Table header/static structure.
 * Yellow: Assumption/open confirmation.
+* **Oranye muda (FCE4D6): Auto-Applied/Proposed** — hasil promosi otomatis dari Critical Challenge/What-If berjenis Pola Teknis Standar (lihat 14.4c). Beda dari kuning (assumption/open) dan putih (confirmed biasa) — reviewer harus bisa bedakan "sudah diputuskan otomatis, siap dipakai" vs "masih terbuka menunggu keputusan".
 * Light red: Critical validation/error/risk.
 * Purple: Decision/control/technical logic.
 * Light blue: Information/current behaviour.

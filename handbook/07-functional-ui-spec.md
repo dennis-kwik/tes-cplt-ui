@@ -2,7 +2,7 @@
 Satu tabel per Desain UI, tapi TIDAK LAGI 1 baris = 1 component secara mutlak. Aturan sekarang: **1 baris = 1 component PADA 1 konteks (Mode × Status) yang constraint/behaviour-nya sudah final untuk konteks itu.** Kalau sebuah component berperilaku sama di semua Mode/Status, cukup 1 baris (Mode/Status diisi "All"). Kalau berbeda, WAJIB dipecah — dilarang menulis 1 baris dengan deskripsi prosa yang menggabungkan banyak kondisi ("tergantung mode", "sesuai kebutuhan").
 
 ## Kolom wajib (urutan tetap)
-Component ID | Screen | Section | Elemen/Field | Jenis Komponen | **Mode** | **Status Context** | M/O/C/System | Data Type | Min/Max | Format/Allowed Value | Default | Editable/Disabled/Hidden | Behaviour/Event | Validation (client & server) | Permission | Message ID | Data Attribute | Rule ID Terkait | Source/Status
+Component ID | Screen | Section | Elemen/Field | Jenis Komponen | **Mode** | **Status Context** | M/O/C/System | Data Type | Min/Max | Format/Allowed Value | Default | Editable/Disabled/Hidden | Behaviour/Event | Validation (client & server) | Permission | Message ID | Data Attribute | **Sumber** | **Related ID 1** | Related ID 2 | Related ID 3 | Related ID 4 | Source/Status
 
 ## 7.1 Kapan WAJIB row-explosion (berlaku SEMUA jenis komponen, bukan cuma field input)
 Pecah jadi baris terpisah bila salah satu berubah lintas konteks:
@@ -13,10 +13,23 @@ Pecah jadi baris terpisah bila salah satu berubah lintas konteks:
 Berlaku untuk button, checkbox, dropdown, grid action icon, tab, popup trigger — bukan hanya datepicker/textbox.
 
 ## 7.2 Kolom "Editable/Disabled/Hidden" — WAJIB nilai final, tandai kalau belum diputuskan
-Tulis kondisi final: `Editable` / `Disabled` / `Hidden` + syarat pemicunya. Kalau BA belum menentukan, tulis eksplisit: `BELUM DIPUTUSKAN — [pertanyaan spesifik]` dan baris tsb WAJIB juga masuk sheet `Assumption_Decision_Risk_Open` DAN sheet `Critical_Challenge_QnA` (lihat 19) sebagai entry terhubung (Related ID) — supaya kelihatan di 2 tempat: konteks lokal (di sini) dan governance (di sana).
+Tulis kondisi final: `Editable` / `Disabled` / `Hidden` + syarat pemicunya. Kalau BA belum menentukan, tulis eksplisit: `BELUM DIPUTUSKAN — [pertanyaan spesifik]` dan baris tsb WAJIB juga masuk sheet `Assumption_Decision_Risk_Open` DAN sheet `What_If_Critical_Challenge` (lihat 14, Section B) sebagai entry terhubung (Related ID) — supaya kelihatan di 2 tempat: konteks lokal (di sini) dan governance (di sana).
 
 ## 7.3 Component ID convention (Mode×Status explosion)
 `CMP-[FIELD]-[MODE]` bila cukup 1 dimensi, atau `CMP-[FIELD]-[MODE]-[STATUS]` bila 2 dimensi. Contoh: `CMP-START-ADD`, `CMP-START-EDIT-SUBMITTED`, `CMP-START-EDIT-APPROVED`, `CMP-SAVE-EDIT-DRAFT`. ID dasar tanpa suffix TIDAK dipakai lagi begitu sebuah field punya >1 konteks — semua reference (Business Rule Related IDs, Message Catalog Component, Test Scenario Component) WAJIB mengikuti ID granular ini.
+
+## 7.3b Kosakata baku Mode & Status Context (WAJIB — mencegah drift format Component ID)
+Root cause ditemukan pada hasil produksi: Component ID jadi tidak konsisten (`CMP-CHKALL-LIST` vs `CMP-CHKALL-LIST-EMPTY` vs `CMP-BTN-RUNJOB-LIST-ENABLED`) karena kolom Mode/Status Context diisi bebas — kadang mode saja, kadang status saja, kadang syarat kondisional dicampur langsung ke situ. Untuk mencegah ini:
+* **Kolom Mode**: HANYA diisi dari kosakata baku sesuai jenis screen — CRUD screen: `Add, Edit, View, Duplicate`; Search/filter screen: `Search, Filter, Result`; kombinasi keduanya kalau relevan. Kalau screen punya dimensi lain yang berulang (mis. Search By pada modul Reprint Faktur), boleh ditambah sebagai token Mode baru (mis. `SearchBy-Outlet`) — tapi HARUS didaftarkan sekali di awal sheet spec (bagian Screen-State Inventory) sebagai daftar Mode yang dipakai, supaya konsisten dipakai berulang, bukan diciptakan bebas di tiap baris.
+* **Kolom Status Context**: HANYA diisi dari kosakata baku record-lifecycle atau screen-state — `Draft, Submitted, Approved, Rejected, Confirmed, Expired` (utk record dengan status bisnis) ATAU `Initial, Loading, Result, Empty, Error, Job-Running` (utk screen tanpa status record, seperti search/report/job screen) ATAU `All` (kalau sama di semua status). JANGAN taruh syarat kondisional bebas (mis. "Visible jika X", "RSO belum dipilih") di kolom ini — syarat seperti itu masuk kolom Behaviour/Event atau Validation, bukan Status Context.
+* Setiap sheet spec WAJIB mendaftarkan daftar Mode dan Status Context yang dipakai di bagian atas (sebelum tabel Field Matrix dimulai), supaya reviewer bisa cross-check konsistensi tanpa harus scan semua baris manual.
+
+## 7.3c Skema Related ID — 4 Slot Tetap + Hyperlink (WAJIB)
+**JANGAN concatenate banyak ID dalam 1 cell** (mis. "CMP-X; VAL-Y; BR-Z" dalam 1 sel — ini menyulitkan hyperlink dan parsing). Sebagai gantinya: 4 kolom terpisah `Related ID 1` s/d `Related ID 4`, prinsip 1 cell = 1 value.
+* **Related ID 1** = sumber/dampak PALING UTAMA/PALING TERDAMPAK — WAJIB diisi (kalau ada relasi) dan WAJIB di-hyperlink ke cell asal ID tersebut.
+* Related ID 2-4 = relasi tambahan, urutan menurun berdasarkan relevansi, boleh di-hyperlink juga (tidak wajib).
+* Kalau relasi >4, sisanya ditulis sebagai catatan teks biasa tanpa hyperlink di kolom terakhir — kasus ini seharusnya jarang.
+* **Cara hyperlink (2-tahap)**: tahap 1 tulis semua data + bangun index "ID → (nama sheet FINAL, alamat cell)"; tahap 2 scan ulang semua kolom Related ID/Component ID/Message ID, cocokkan ke index, tempelkan hyperlink internal (`#'NamaSheet'!A1`). Nama sheet HARUS sudah final (setelah dipotong 31 karakter, dst) sebelum index dibangun — lihat 22 (Excel Generation Safety Guardrails) untuk bahaya hyperlink ke sheet yang belum final.
 
 ## 7.4 Contoh baris — datepicker Start/End (mengikuti pola user)
 * CMP-START-ADD | MainPage_AddEdit | Header | Periode Start | Datepicker | Add | All | O/M(tentukan) | Date | min=SystemDate; max=EndDate | dd/mm/yyyy, bisa ketik | null | Editable | Isi tanggal mulai | min<=EndDate; format valid | - | VAL-START-001 | Master.StartDate | BR-xxx-001 | Confirmed

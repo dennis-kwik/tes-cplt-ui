@@ -1,5 +1,46 @@
 # Changelog
 
+## Addendum pasca-v2.9 (tanpa bump versi — sesuai instruksi eksplisit: tidak menaikkan versi tanpa diminta)
+Disesuaikan dengan insight dari `Riwayat_Desain_CorDev_Blueprint.md` (dokumen desain arsitektur Claude Enterprise yang dikerjakan paralel), khusus bagian 6d (Goal-Driven Execution) dan 9 (Insight dari Evaluasi Hasil Nyata):
+* Self-Audit Pass (20) ditulis ulang jadi **checklist tercentang satu-satu** (format `- [ ]`), bukan lagi 6 poin naratif — sejalan dengan temuan "punya aturan tidak sama dengan menegakkannya" (checklist eksplisit jauh lebih kuat dari "baca ulang lalu dianggap oke").
+* Ditambah 20.0 — **penegasan Self-Audit Pass wajib dijalankan meski mahal token**, menjawab insight bahwa dorongan efisiensi token kemungkinan nyata berkontribusi ke kegagalan penerapan aturan mekanis yang sudah eksplisit.
+* Ditambah rekomendasi cek independen di chat/sesi baru (20.4) — sejalan dengan pola "cek independen" yang divalidasi silang di dokumen arsitektur.
+
+## v2.9 — Sinkronisasi Penuh Diskusi Lanjutan (ex-Claude Blueprint Engine v0.1)
+Menyatukan seluruh keputusan desain dari sesi diskusi lanjutan ke repo House Standard, setelah sebelumnya sempat hanya terdokumentasi di `Claude_Blueprint_Engine.md` (dokumen terpisah untuk Claude Project).
+* **Sheet digabung**: `What_If` + `Critical_Challenge_QnA` → `What_If_Critical_Challenge` (1 sheet, 2 section). Handbook 19 dihapus, isinya melebur ke handbook 14.
+* **Related ID 4-slot + hyperlink** (7.3c, baru): ganti kolom "Related IDs" bertumpuk jadi 4 kolom terpisah (1 cell = 1 value); Related ID 1 = dampak paling utama, WAJIB di-hyperlink ke cell asal.
+* **Kosakata baku Mode/Status** (7.3b) tetap berlaku, sekarang terhubung ke skema Related ID baru.
+* **Kolom "Sumber"** (baru, di Business Rules & Field Matrix): `Requirement Asli` / `Auto-Applied dari WF-xxx` / `Auto-Applied dari CQ-xxx`.
+* **Klasifikasi Jenis Jawaban** (14.4b, baru): Keputusan Bisnis (tetap Open/Assumption) vs Pola Teknis Standar (WAJIB auto-apply langsung ke Business Rule/Field Matrix/Test, status "Auto-Applied") — dengan pemetaan default per domain Critical Challenge.
+* **Katalog Pola Teknis Standar** (14.4d, baru): daftar pola baku (cegah submit dobel, deteksi data usang, kegagalan sebagian, retry otomatis, soft delete, effective dating) ditulis bahasa bisnis dulu, istilah teknis cuma catatan kurung.
+* **Kolom "Dampak ke Spec"** (baru): daftar eksplisit semua ID yang ter-generate akibat auto-apply, untuk panduan rollback kalau BA membatalkan.
+* **Dedup lintas-screen eksplisit** (14.4e, baru): kolom "Berlaku Untuk" wajib diisi saat konsolidasi entry serupa antar screen.
+* **Bahasa bisnis dulu, istilah teknis kedua** (01, mandat baru): berlaku ke SELURUH workbook, bukan cuma katalog pola teknis.
+* **Fill warna Auto-Applied** (17.3, baru): oranye muda (FCE4D6), beda dari kuning-assumption dan putih-confirmed.
+* **Configurability Elicitation hard-stop** (3.3c, baru): proses berhenti kalau mode "highly configurable" diminta tanpa info apapun soal apa yang perlu configurable.
+* **Struktur Scope Configurability generik** (3.3d, baru): Master Configuration Engine dengan scope level generik (bukan hardcode PT/RSO/Area), berlaku ke pilihan konten, parameter validasi, dan visibility field.
+* **Future-proof 5 tahun** (5.1, baru): pertanyaan wajib di Business Intent/Invariants; Horizon What-If diberi patokan waktu eksplisit (Near<2th, Mid 2-4th, Long 5th+) di 14.2.
+* **Kategori kontekstual tambahan** (14.3): pertimbangkan driver spesifik konteks menu (termasuk tapi tidak terbatas AI/automation) di luar 16 kategori baku, TIDAK ditambahkan mekanis ke semua modul.
+* **Mode Desain Enterprise/Configurable vs Simple** (handbook 21, baru): heuristik rekomendasi otomatis + WAJIB konfirmasi user sebelum generate.
+* **Excel Generation Safety Guardrails** (handbook 22, baru): penyebab umum file .xlsx corrupt, urutan generate yang aman, File Integrity Check wajib (buka-ulang file sebelum diserahkan) — respons langsung terhadap kasus file corrupt yang ditemukan di produksi.
+
+## v2.8 — Auto-Promosi Pola Teknis Standar ke Spec Inti (supersede sebagian oleh v2.9 di atas)
+Menjawab gap: Critical Challenge/What-If yang jawabannya sudah jelas (best-practice teknis, bukan keputusan bisnis) sebelumnya tetap nyangkut status "Open" sampai konfirmasi manual — padahal insight-nya sendiri sudah cukup untuk langsung diadopsi.
+* Critical_Challenge_QnA: kolom baru "Jenis Jawaban" (Keputusan Bisnis / Pola Teknis Standar). Pola Teknis Standar WAJIB auto-promosi jadi Business Rule (status Proposed) + Field Matrix + Test Scenario saat itu juga (19.3b, 19.5b) — status berubah "Answered (Auto-Proposed)". Keputusan Bisnis tetap Open/Assumption seperti sebelumnya.
+* What-If: Horizon=Near dengan mitigasi konkret ikut auto-promosi (14.2b). Horizon Mid/Long tetap murni dokumentasi masa depan.
+* Self-Audit Pass (20) ditambah item ke-6: verifikasi semua kandidat auto-promosi benar-benar sudah masuk ke spec inti, bukan cuma tertulis di sheet Challenge/What-If.
+* Tujuan: memaksimalkan kelengkapan Business Rules/Field Matrix/Test Scenario sejak draft pertama — mengurangi celah spesifikasi yang sebenarnya sudah punya jawaban jelas tapi dibiarkan terbuka.
+
+## v2.7 — Self-Audit Pass & Perbaikan Gap dari Audit Produksi
+Dilatarbelakangi audit langsung terhadap hasil produksi nyata (blueprint Reprint Faktur) yang menemukan: interpretasi ambigu requirement diselesaikan diam-diam tanpa ditandai (menyebabkan kontradiksi antar sheet), Component ID tidak konsisten skemanya, Test Scenario under-coverage tanpa disadari, dan sheet Snapshot untuk input teks murni tidak ditangani eksplisit.
+* Sheet baru wajib: TIDAK ADA sheet baru, tapi ditambah **langkah proses baru**: Self-Audit Pass (handbook 20) — baca ulang seluruh workbook dengan persona devil's advocate diarahkan ke hasil sendiri, dijalankan SEBELUM file difinalisasi.
+* Ambiguity Handling (3.3b, baru): requirement dengan >1 tafsiran valid WAJIB dicatat kedua opsinya, bukan dipilih diam-diam; tafsiran default WAJIB konsisten di semua sheet yang menyinggungnya.
+* Kosakata baku Mode & Status Context (7.3b, baru): mencegah Component ID drift dengan token tertutup, bukan teks bebas.
+* Formula minimum Test Scenario (16.3, baru): jumlah test >= (2 × Business Rule Critical) + (1 × Critical Challenge) — dihitung eksplisit, bukan diperkirakan.
+* Input teks chat murni (3.4b, ditambahkan): sheet Snapshot untuk kasus tanpa file visual sama sekali WAJIB berisi reproduksi requirement asli, bukan catatan generik.
+* Instruksi operasional dipadatkan ulang (GATE FORMAT + QUALITY GATE digabung jadi 1 checklist) untuk memberi ruang bagi aturan baru, tetap di bawah 8.000 karakter (5.849).
+
 ## v2.6 — Dual-Sheet Wajib (Snapshot + Redrawn) & Ekspansi Tipe Input
 * Cell-drawing TIDAK LAGI fallback opsional — sekarang WAJIB SELALU dibuat untuk setiap Desain UI, berpasangan dengan sheet Snapshot (bukti asli sebagai gambar). Sheet berubah dari 1 ("Desain UI") menjadi 2 per Desain UI: `[KODE]_[Screen]_Snap` dan `[KODE]_[Screen]_Redr`.
 * Tipe input diperluas dari gambar/Excel saja menjadi: gambar, Excel, PDF (rasterize per halaman), Word/.docx (ekstrak gambar mockup + ekstrak teks requirement), dan Markdown/.md (input terstruktur pelengkap — business rule/question bank, bukan sumber visual).
