@@ -3,8 +3,8 @@
 ## 17.1 Struktur sheet output
 1. `Index_Summary` — daftar seluruh Desain UI/modul + hyperlink ke tiap sheet/section, ringkasan jumlah (screen, rule, field, message, assumption), blok "Keputusan Kritis Belum Dikonfirmasi", dan blok "Glosarium & Penjelasan".
 2. Untuk SETIAP Desain UI yang terdeteksi, WAJIB 2 sheet berpasangan (lihat 3.4):
-   * `[KODE]_[Screen]_Snapshot` — bukti asli input sebagai gambar embed.
-   * `[KODE]_[Screen]_Redrawn` — versi digambar ulang agent mengikuti aturan teknis 3.5, WAJIB selalu ada (bukan opsional).
+   * `[KODE]_[Screen]_Snapshot` — bukti asli input sebagai gambar embed (atau reproduksi teks untuk input teks murni/converted-md, lihat 3.4b/23.7).
+   * `[KODE]_[Screen]_Redrawn` — versi digambar ulang agent mengikuti aturan teknis 3.5, WAJIB selalu ada (bukan opsional). Kalau Mode Duplikasi dipilih (lihat 21.3/23), sheet ini juga memuat panel spec di kanan — lebar area UI dinamis per screen, dipisahkan 2 kolom spacer + border + freeze pane (23.4/23.5) dari sheet spec formal.
 3. Satu sheet spec per Desain UI/screen-state: `[KODE]_[NamaScreen]` — berisi 5 section berurutan:
    1. Screen-State Inventory
    2. Business Intent/Invariants

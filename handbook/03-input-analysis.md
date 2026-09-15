@@ -55,7 +55,9 @@ Setiap Desain UI yang terdeteksi WAJIB menghasilkan **2 sheet terpisah**, bukan 
 * **Excel (cell design)**: area desain di-screenshot/render jadi gambar untuk sheet Snapshot; dipakai juga sebagai acuan detail untuk sheet Redrawn.
 * **PDF**: tiap halaman yang mengandung mockup dirender jadi gambar (rasterize per halaman), diperlakukan sama seperti input gambar.
 * **Word (.docx)**: ekstrak gambar mockup yang di-embed di dalam dokumen (diperlakukan seperti input gambar) DAN ekstrak teks requirement/business rule tertulis di dokumen (jadi input tambahan untuk Business Rules/Assumption, BUKAN untuk redraw UI).
-* **Markdown (.md)**: BUKAN sumber visual — dipakai sebagai input terstruktur pelengkap (business rule yang sudah ditulis manusia, question/reference bank per tipe komponen). Isinya di-parse dan dipetakan ke Business Rules/Field Matrix/What_If_Critical_Challenge sesuai konten; tidak menghasilkan sheet Desain UI.
+* **Markdown (.md)**: dua varian, WAJIB dibedakan (disambiguasi lengkap: 23.7):
+  1. Input terstruktur murni (business rule/question bank manusia) — BUKAN sumber visual, di-parse ke Business Rules/Field Matrix/What_If_Critical_Challenge, tidak menghasilkan sheet Desain UI.
+  2. **Hasil konversi dari sumber visual asli** (Excel/PDF/Word/Image/Figma export, dikonversi di luar sistem sebelum upload) — PERLAKUKAN SEBAGAI PENGGANTI sumber visual untuk keperluan redraw (lihat 23.7 untuk Snapshot & disambiguasi).
 * **Teks chat murni (tanpa file apapun)**: TIDAK ADA bukti visual sama sekali. Sheet `_Snapshot` TETAP WAJIB dibuat, tapi isinya bukan gambar — melainkan REPRODUKSI TEKS ASLI requirement user (bukan parafrase/ringkasan bebas) ditempatkan rapi di cell, plus label eksplisit "TIDAK ADA file/gambar visual diupload untuk Desain UI ini — sheet ini berisi requirement asli sebagai bukti tekstual". Ini BEDA dari sekadar menulis 1 kalimat catatan generik "tidak ada evidence" — requirement asli harus benar-benar direproduksi supaya reviewer bisa membandingkan langsung ke sheet Redrawn tanpa perlu scroll ke chat asal.
 
 ## 3.5 Aturan teknis cell-drawing (WAJIB — dipakai di SETIAP sheet `[KODE]_[Screen]_Redrawn`)

@@ -28,6 +28,7 @@ Tujuan dokumen: Knowledge source komprehensif untuk Copilot Agent yang mengubah 
 * [20. Self-Audit Pass](handbook/20-self-audit-pass.md)
 * [21. Mode Desain (Enterprise vs Simple)](handbook/21-design-modes.md)
 * [22. Excel Generation Safety Guardrails](handbook/22-excel-safety-guardrails.md)
+* [23. Layout Mode Redrawn (Duplikasi vs Terpisah)](handbook/23-redrawn-layout-mode.md)
 
 ## Navigasi Templates
 * [Business Rule Template](templates/business-rule-template.md)

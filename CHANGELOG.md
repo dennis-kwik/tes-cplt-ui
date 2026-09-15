@@ -1,5 +1,13 @@
 # Changelog
 
+## Addendum ke-2 pasca-v2.9 (tanpa bump versi)
+Berdasarkan uji coba nyata proyek PROMT02 (Penarikan Material) via Copilot Studio — hasil dinilai layak sebagian, diadopsi sebagai MODE OPSIONAL (bukan default universal) karena beberapa aturan bersifat project-specific:
+* **Handbook baru 23 — Layout Mode Redrawn**: Mode Duplikasi (UI+spec panel kanan di Redrawn, spec formal tetap ada terpisah) vs Mode Terpisah (default lama) — WAJIB dikonfirmasi eksplisit sebelum generate, dimensi mode independen dari Enterprise/Simple (21.3).
+* Area UI di Redrawn Mode Duplikasi: lebar DINAMIS per screen (bukan rentang tetap A:AN) — 2 kolom spacer wajib + border tebal di tengah gap + freeze panes di kolom spacer kedua (23.4/23.5).
+* Input Markdown diperluas (3.4b, 23.7): sekarang ada 2 varian — business-rule bank (existing) DAN hasil konversi dari sumber visual (Excel/PDF/Word/Image/Figma export) yang diperlakukan sebagai pengganti sumber visual untuk redraw. Disambiguasi lewat prinsip Ambiguity Handling (3.3b) kalau tidak jelas.
+* Interpretasi pipeline Markdown `|` sebagai kolom logis grid (23.8) — berlaku universal (bukan project-specific), tidak boleh ada karakter `|` literal tersisa di area UI redraw.
+* Self-Audit Pass (20) dapat tambahan checklist khusus Mode Duplikasi (23.6): cross-check byte-for-byte panel kanan Redrawn vs sheet spec formal.
+
 ## Addendum pasca-v2.9 (tanpa bump versi — sesuai instruksi eksplisit: tidak menaikkan versi tanpa diminta)
 Disesuaikan dengan insight dari `Riwayat_Desain_CorDev_Blueprint.md` (dokumen desain arsitektur Claude Enterprise yang dikerjakan paralel), khusus bagian 6d (Goal-Driven Execution) dan 9 (Insight dari Evaluasi Hasil Nyata):
 * Self-Audit Pass (20) ditulis ulang jadi **checklist tercentang satu-satu** (format `- [ ]`), bukan lagi 6 poin naratif — sejalan dengan temuan "punya aturan tidak sama dengan menegakkannya" (checklist eksplisit jauh lebih kuat dari "baca ulang lalu dianggap oke").
