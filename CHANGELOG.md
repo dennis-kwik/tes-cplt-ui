@@ -1,5 +1,13 @@
 # Changelog
 
+## Addendum ke-3 pasca-v2.9 (tanpa bump versi)
+Berdasarkan sesi mock-up validasi visual langsung di Excel (3 iterasi kalibrasi) — 2 bug produksi nyata ditemukan dan diperbaiki di sumbernya, bukan cuma di mockup:
+* **Bug border box** (3.5a, baru): implementasi lama menimpa sisi atas kotak dengan sisi bawah di cell yang sama untuk box 1-baris (r1==r2), membuat tombol/header terlihat bocor tanpa sisi atas. Algoritma pengganti (1 assignment per cell, gabungkan semua sisi sekaligus) dibakukan sebagai kode wajib, bukan cuma deskripsi.
+* **Bug sizing hardcode** (3.5b, baru): lebar elemen (tombol, header) sebelumnya ditebak/nilai tetap, menyebabkan tombol kepanjangan ATAU header terpotong ("No. Surat Kirim" jadi "No"). Formula terkalibrasi: `max(3, ceil(len(text)/2.6)+1)` cell, hasil 3 iterasi pengujian visual nyata (kalibrasi awal 1.6 char/cell terlalu longgar, 2.2 masih longgar di teks panjang, 2.6 disepakati).
+* **Bug alignment**: button sebelumnya center-align (melanggar aturan rata-kiri yang sudah ada), menyebabkan teks terlihat meluber/terpotong di box pas-pasan. Diperbaiki jadi rata kiri + 1 spasi indent, konsisten dengan aturan lain.
+* **Pola header berjenjang dibakukan** (3.5c, baru): vertical spanning, dual-row (kolom sama beda label per baris), dan grouped (parent menaungi sub-kolom) — SEMUA pakai 1 box besar + divider tambahan, bukan elemen terpisah yang digabung (pendekatan lama menyebabkan gap/misalignment).
+* **Grid hierarkis dibakukan** (3.5d, baru): kolom toggle lebar tetap, header toggle blank (tanpa fill), indent baris detail via cell toggle kosong (bukan pengurangan lebar kolom).
+
 ## Addendum ke-2 pasca-v2.9 (tanpa bump versi)
 Berdasarkan uji coba nyata proyek PROMT02 (Penarikan Material) via Copilot Studio — hasil dinilai layak sebagian, diadopsi sebagai MODE OPSIONAL (bukan default universal) karena beberapa aturan bersifat project-specific:
 * **Handbook baru 23 — Layout Mode Redrawn**: Mode Duplikasi (UI+spec panel kanan di Redrawn, spec formal tetap ada terpisah) vs Mode Terpisah (default lama) — WAJIB dikonfirmasi eksplisit sebelum generate, dimensi mode independen dari Enterprise/Simple (21.3).

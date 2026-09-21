@@ -65,10 +65,64 @@ Berlaku untuk sheet Redrawn yang WAJIB selalu dibuat (lihat 3.4). Ini SEMUA waji
 * **Lebar kolom seragam 2,57** (`column_dimensions[col].width = 2.57`) di SELURUH kolom yang menjadi area desain UI — konsisten dari kiri ke kanan, tidak ada kolom lebih lebar/sempit di tengah area.
 * **TIDAK ADA merge cell** di area desain sama sekali — bentuk elemen lebar dibuat dari beberapa cell sempit berdampingan, bukan 1 cell yang di-merge.
 * **TIDAK ADA wrap text**; semua teks **rata kiri** (`horizontal='left'`), termasuk label yang biasanya rata tengah di UI asli — konsistensi grid lebih penting daripada meniru alignment visual persis.
-* **Button multi-cell**: beberapa cell berdampingan yang membentuk 1 tombol WAJIB punya **1 border luar saja** (outer border di 4 sisi rentang), dan **cell internal di antaranya TIDAK punya border vertikal** — supaya terlihat sebagai 1 tombol utuh, bukan beberapa kotak terpisah.
+* **Button multi-cell**: beberapa cell berdampingan yang membentuk 1 tombol WAJIB punya **1 border luar saja** (outer border di 4 sisi rentang), dan **cell internal di antaranya TIDAK punya border vertikal** — supaya terlihat sebagai 1 tombol utuh, bukan beberapa kotak terpisah. Algoritma implementasi WAJIB (lihat 3.5a) — root cause kegagalan versi sebelumnya adalah border digambar dengan beberapa assignment berurutan yang saling menimpa di cell yang sama, menghilangkan sisi atas kotak.
+* **Sizing elemen berbasis panjang teks aktual** (lihat 3.5b) — WAJIB dihitung dari formula, bukan ditebak/nilai tetap sembarangan. Berlaku ke SEMUA elemen bertext: button, label, header kolom, dropdown — bukan cuma tombol.
+* **Header grid berjenjang & grid hierarkis** (lihat 3.5c/3.5d) — pola khusus untuk header 2-baris (grouping/dual-purpose) dan grid tree expand-collapse, tanpa merge.
 * **Tab aktif vs nonaktif** harus bisa dibedakan visual (mis. aktif = fill lebih gelap/bold/tanpa border bawah menyatu dengan konten; nonaktif = fill lebih terang/normal).
 * **Input disabled** = fill abu-abu (mis. D9D9D9).
 * **Row selected** (baris grid yang sedang dipilih user) = fill kuning. **PENTING — beda konteks dari kuning "assumption" di sheet spec** (17.3/17.4): kuning di sheet Desain UI berarti "baris terpilih/selection state" pada mockup, BUKAN penanda assumption. Jangan disamakan maknanya.
 * **Error state** = fill merah muda (sama seperti convention critical/error di 17.3).
 * **Loading state dan empty state** WAJIB direpresentasikan sebagai bagian dari desain (mis. baris tambahan/varian kecil yang menunjukkan skeleton/spinner placeholder dan tampilan "data kosong"), bukan cuma default state terisi data.
 * **Dropdown utama** (dropdown yang jadi filter/pilihan penting, bukan dekorasi) WAJIB diberi **Data Validation** Excel asli (`openpyxl.worksheet.datavalidation.DataValidation`, type="list") supaya benar-benar berfungsi sebagai dropdown saat file dibuka, bukan cuma gambar visual dropdown.
+
+## 3.5a Algoritma Border Box (WAJIB — root cause kegagalan produksi, jangan reimplementasi bebas)
+Ditemukan bug nyata: implementasi border yang menggambar sisi atas dan sisi bawah lewat 2 loop/assignment TERPISAH pada rentang 1 baris (r1==r2) saling menimpa di cell yang sama — assignment kedua menghapus assignment pertama, sehingga sisi atas kotak hilang dan tombol terlihat "bocor"/tidak utuh. Algoritma WAJIB (per cell, SATU assignment yang menggabungkan semua sisi relevan sekaligus):
+```
+def box(ws, r1, c1, r2, c2, fill=None):
+    for rr in range(r1, r2+1):
+        for cc in range(c1, c2+1):
+            top = THIN if rr == r1 else None
+            bottom = THIN if rr == r2 else None
+            left = THIN if cc == c1 else None
+            right = THIN if cc == c2 else None
+            cl = ws.cell(row=rr, column=cc)
+            if fill: cl.fill = fill
+            if top or bottom or left or right:
+                cl.border = Border(top=top, bottom=bottom, left=left, right=right)
+```
+Untuk menambah 1 garis internal TANPA menghapus border box yang sudah ada di cell itu (dipakai di 3.5c untuk divider antar sub-kolom header), WAJIB baca border existing dulu lalu gabungkan, bukan replace total:
+```
+def add_divider(ws, r, c, side="right"):
+    b = ws.cell(row=r, column=c).border
+    kwargs = dict(top=b.top, bottom=b.bottom, left=b.left, right=b.right)
+    kwargs[side] = THIN
+    ws.cell(row=r, column=c).border = Border(**kwargs)
+```
+
+## 3.5b Formula Sizing Berbasis Teks (WAJIB, terkalibrasi dari pengujian visual nyata)
+Setiap elemen bertext (button, label, dropdown, header) WAJIB dihitung lebarnya (dalam jumlah cell) dari panjang teks aktual — bukan angka tetap yang ditebak. Formula terkalibrasi (hasil 3 iterasi pengujian visual langsung di Excel, jangan diubah tanpa pengujian ulang serupa):
+```
+CHAR_PER_CELL = 2.6   # jumlah karakter yang muat per 1 cell lebar 2,57
+PAD = 1                # padding tambahan (dalam jumlah cell)
+
+def text_width_cells(text, minimum=3):
+    import math
+    needed = math.ceil(len(text) / CHAR_PER_CELL) + PAD
+    return max(minimum, needed)
+```
+* Teks WAJIB rata kiri (`horizontal='left'`), TIDAK PERNAH center — pelanggaran ini root cause bug kedua yang ditemukan: teks center di box yang pas-pasan menyebabkan efek visual "meluber"/terpotong di Excel. Tambahkan 1 spasi di depan teks sebagai indent visual dari border kiri (mis. `" " + text`).
+* Gap antar elemen berdampingan (mis. antar tombol) = 2 cell kosong (tanpa border) di antaranya.
+* Formula ini berlaku SAMA untuk header kolom grid, bukan cuma tombol — kegagalan versi sebelumnya adalah header di-hardcode lebar sembarangan (mis. semua header disamakan 8-15 cell tanpa hitung), menyebabkan label panjang seperti "No. Surat Kirim / Material" terpotong jadi "No" karena cell tetangga terisi/border sehingga Excel meng-clip overflow teks.
+
+## 3.5c Header Grid Berjenjang (2 baris, tanpa merge)
+Tiga pola header yang WAJIB didukung — SEMUA memakai algoritma `box()` yang SAMA (3.5a): gambar **1 box besar** dulu (mencakup seluruh rentang baris×kolom yang relevan), baru tambahkan divider internal (`add_divider`) HANYA di tempat yang perlu. Jangan pernah menggambar sub-elemen sebagai box terpisah lalu digabung — itu menyebabkan celah/gap tidak presisi antar sub-elemen.
+* **Vertical spanning** (1 label menaungi tinggi 2 baris, mis. "No. Surat Kirim", "Status" yang tidak punya sub-kolom): `box(ws, header_row1, c, header_row2, c+width-1, fill=DARKHEADER)` — SATU box mencakup 2 baris, label ditulis di row1 saja, row2 dibiarkan kosong (fill sama, tanpa garis pemisah horizontal karena memang tidak ada assignment terpisah untuk row2).
+* **Dual-row** (kolom sama, label BEDA di row1 vs row2 — mis. "NIK" di atas / "Tgl. Transaksi" di bawah, dipakai saat 1 kolom punya makna berbeda tergantung tipe baris data): SAMA seperti vertical spanning (1 box, 2 baris), bedanya row2 DIISI teks berbeda, bukan dikosongkan.
+* **Grouped** (1 label parent menaungi beberapa sub-kolom, mis. "Total" menaungi "Qty"+"Uom"): gambar SATU box besar mencakup row1+row2 dan seluruh lebar gabungan sub-kolom sekaligus (`box(ws, header_row1, c, header_row2, c+total_width-1, fill=DARKHEADER)`), tulis label parent di row1 kolom pertama, tulis tiap sub-label di row2 pada posisi kolomnya masing-masing, LALU tambahkan `add_divider(ws, header_row2, <kolom_akhir_subkolom>, side="right")` HANYA di baris row2 sebagai pemisah antar sub-kolom — TIDAK ADA garis horizontal antara row1 (parent) dan row2 (sub-kolom), karena keduanya bagian dari 1 box yang sama.
+
+## 3.5d Grid Hierarkis (tree expand/collapse, indent tanpa merge)
+Untuk grid dengan baris grup (bisa di-expand/collapse) dan baris detail di bawahnya:
+* Sediakan kolom toggle di paling kiri, lebar tetap (mis. 3 cell: 1 untuk checkbox `[ ]`, 1-2 untuk glyph segitiga `▼`/`▶`). Cell header di atas kolom toggle ini DIBIARKAN KOSONG (tanpa fill gelap) — bukan diberi fill seperti header lainnya.
+* Baris grup: isi cell toggle dengan `[ ]` + glyph `▼` (expanded) atau `▶` (collapsed), fill baris sedikit berbeda (mis. abu muda) untuk membedakan dari baris detail.
+* Baris detail: kolom toggle DIBIARKAN KOSONG (tetap ada box border kosong, sejajar posisi dengan toggle di atasnya) sebagai bentuk indentasi visual — BUKAN mengurangi lebar kolom atau menggeser konten, cukup cell toggle-nya kosong.
+* Lebar kolom data (setelah kolom toggle) tetap dihitung dari formula 3.5b berdasarkan header terpanjang di kolom itu.
