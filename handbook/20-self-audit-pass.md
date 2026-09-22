@@ -18,6 +18,10 @@ Setelah seluruh sheet selesai ditulis (tahap draft), sebelum file dianggap final
 - [ ] **Devil's advocate terhadap hasil sendiri**: re-run persona Critical Challenge (14.4), target-nya WORKBOOK YANG BARU SELESAI DIBUAT, bukan requirement asli. Ada assumption yang ditulis seolah final (bukan "BELUM DIPUTUSKAN")? Ada rule yang bertentangan dengan rule lain di sheet yang sama atau sheet berbeda? Temuan Critical Challenge sudah dibawa balik memperbaiki Business Rules terkait (bukan cuma dicatat di sheet Challenge saja)?
 - [ ] **Auto-apply propagation check**: semua kandidat Pola Teknis Standar/What-If Near+mitigasi konkret sudah benar-benar masuk ke Business Rule/Field Matrix/Test Scenario (14.4c) — bukan cuma tertulis di sheet What_If_Critical_Challenge saja?
 - [ ] **Cross-check angka Index_Summary**: angka ringkasan (jumlah rule/component/test/dst) cocok dengan jumlah baris aktual di tiap sheet — bukan angka perkiraan yang ditulis sebelum sheet selesai?
+- [ ] **Element inventory cross-check** (3.4d): inventaris muncul VISIBLE di sheet `_Snap` (bukan cuma langkah kerja internal)? Setiap elemen di inventaris ada di redraw? Teks SAMA PERSIS (verbatim) — tidak diparafrase/"dikoreksi"? Urutan & pengelompokan ikut Traversal Order (3.4c), bukan disusun ulang? Tidak ada elemen kecil/dekoratif yang hilang?
+- [ ] **Depth Balance check** (3.4f): Narrative Spec Panel di `_Redr` TIDAK lebih detail dari sheet spec formal? Sheet spec formal minimal SETARA kedalamannya dengan narasi (tidak lebih dangkal)?
+- [ ] **No-duplikasi Tools vs List View** (3.4e): trigger/icon yang sudah dijelaskan di section Tools/Trigger tidak diulang lagi di List View Kolom?
+- [ ] **Urutan sheet check** (17.1): workbook dikelompokkan per JENIS (semua Snap → semua Redrawn → semua Spec Formal → lintas-modul) — bukan diulang per modul berselang-seling?
 - [ ] **File integrity check** (22.5): file berhasil dibuka ulang tanpa error?
 
 ## 20.3 Kalau Self-Audit menemukan masalah

@@ -1,23 +1,12 @@
 # 17. Workbook Architecture dan Formatting
 
-## 17.1 Struktur sheet output
+## 17.1 Struktur sheet output — DIKELOMPOKKAN PER JENIS (WAJIB, bukan per-modul berselang-seling)
+Urutan sheet dalam workbook WAJIB dikelompokkan per JENIS sheet, bukan diulang per modul (mis. BUKAN Snap1-Redr1-Spec1-Snap2-Redr2-Spec2...). Urutan baku:
 1. `Index_Summary` — daftar seluruh Desain UI/modul + hyperlink ke tiap sheet/section, ringkasan jumlah (screen, rule, field, message, assumption), blok "Keputusan Kritis Belum Dikonfirmasi", dan blok "Glosarium & Penjelasan".
-2. Untuk SETIAP Desain UI yang terdeteksi, WAJIB 2 sheet berpasangan (lihat 3.4):
-   * `[KODE]_[Screen]_Snapshot` — bukti asli input sebagai gambar embed (atau reproduksi teks untuk input teks murni/converted-md, lihat 3.4b/23.7).
-   * `[KODE]_[Screen]_Redrawn` — versi digambar ulang agent mengikuti aturan teknis 3.5, WAJIB selalu ada (bukan opsional). Kalau Mode Duplikasi dipilih (lihat 21.3/23), sheet ini juga memuat panel spec di kanan — lebar area UI dinamis per screen, dipisahkan 2 kolom spacer + border + freeze pane (23.4/23.5) dari sheet spec formal.
-3. Satu sheet spec per Desain UI/screen-state: `[KODE]_[NamaScreen]` — berisi 5 section berurutan:
-   1. Screen-State Inventory
-   2. Business Intent/Invariants
-   3. Business Rules
-   4. Functional UI Spec & Field Matrix — SATU tabel, tapi dengan row-explosion per Mode×Status (lihat handbook 07); 1 baris = 1 component PADA 1 konteks final, bukan 1 baris umum per component
-   5. Message Catalog
-4. Sheet lintas-modul (satu sheet per jenis artefak, mencakup semua modul dalam file):
-   * `Overview_Scope`
-   * `Actor_Role_Permission`
-   * `Data_API`
-   * `What_If_Critical_Challenge` — gabungan What-If Matrix (Section A) + Critical Challenge QnA/devil's advocate (Section B), lihat handbook 14
-   * `Test_Scenario`
-   * `Assumption_Decision_Risk_Open`
+2. **SEMUA sheet `_Snapshot`** (untuk Desain UI 1 sampai n, berurutan) — bukti asli input sebagai gambar embed ATAU reproduksi teks (input teks murni/converted-md, lihat 3.4b/23.5), PLUS **Element Inventory** (3.4d) sebagai konten visible di sheet ini.
+3. **SEMUA sheet `_Redrawn`** (untuk Desain UI 1 sampai n, berurutan) — versi digambar ulang mengikuti aturan teknis 3.5, WAJIB selalu ada. Format baku (bukan opsional): panel spec kanan berisi Narrative Spec Panel (3.4e), dipisahkan 2 kolom spacer + border + freeze pane (23.1-23.3) dari area UI kiri.
+4. **SEMUA sheet spec formal** (untuk Desain UI 1 sampai n, berurutan) — `[KODE]_[NamaScreen]`, 5 section: Screen-State Inventory, Business Intent/Invariants, Business Rules, Functional UI Spec & Field Matrix (row-explosion Mode×Status, lihat handbook 07), Message Catalog. Kedalaman WAJIB ikuti Depth Balance (3.4f) — minimal setara Narrative Spec Panel, boleh lebih detail.
+5. Sheet lintas-modul (satu sheet per jenis artefak, mencakup semua modul dalam file): `Overview_Scope`, `Actor_Role_Permission`, `Data_API`, `What_If_Critical_Challenge` (gabungan Section A What-If + Section B Critical Challenge, lihat handbook 14), `Test_Scenario`, `Assumption_Decision_Risk_Open`.
 
 Section yang TIDAK dibuat: Integration/Dependency, Security/Privacy/Audit, Concurrency/Transaction/Idempotency, NFR, Traceability (lihat 02 untuk alasan).
 

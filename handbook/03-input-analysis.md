@@ -60,6 +60,34 @@ Setiap Desain UI yang terdeteksi WAJIB menghasilkan **2 sheet terpisah**, bukan 
   2. **Hasil konversi dari sumber visual asli** (Excel/PDF/Word/Image/Figma export, dikonversi di luar sistem sebelum upload) — PERLAKUKAN SEBAGAI PENGGANTI sumber visual untuk keperluan redraw (lihat 23.7 untuk Snapshot & disambiguasi).
 * **Teks chat murni (tanpa file apapun)**: TIDAK ADA bukti visual sama sekali. Sheet `_Snapshot` TETAP WAJIB dibuat, tapi isinya bukan gambar — melainkan REPRODUKSI TEKS ASLI requirement user (bukan parafrase/ringkasan bebas) ditempatkan rapi di cell, plus label eksplisit "TIDAK ADA file/gambar visual diupload untuk Desain UI ini — sheet ini berisi requirement asli sebagai bukti tekstual". Ini BEDA dari sekadar menulis 1 kalimat catatan generik "tidak ada evidence" — requirement asli harus benar-benar direproduksi supaya reviewer bisa membandingkan langsung ke sheet Redrawn tanpa perlu scroll ke chat asal.
 
+## 3.4c Traversal Order (WAJIB, mengikat SEMUA output turunan)
+Root cause ditemukan pada hasil produksi nyata: redraw yang langsung ditulis dari "kesan visual" sumber (tanpa urutan baca eksplisit) secara konsisten kehilangan elemen kecil (icon, box sekunder), mengubah urutan/pengelompokan elemen sesuai logika sendiri (bukan tata letak asli), dan memparafrase teks (mis. "Active/Deactive" auto-dikoreksi jadi "Activate/Deactivate") — bukan kesalahan acak, tapi konsekuensi alami dari bekerja tanpa urutan rujukan eksplisit.
+
+**Aturan urutan baku**: setiap Desain UI dibaca **kiri-atas → kanan, lalu turun ke baris berikutnya kiri → kanan, dst** (urutan baca dokumen standar) — TIDAK PERNAH dikelompokkan ulang berdasarkan logika sendiri (mis. menyatukan semua action button jadi 1 grup kalau sumber aslinya memisahkan ke row-band berbeda). Urutan ini WAJIB konsisten dipakai di SEMUA tempat berikut — bukan cuma salah satu:
+1. **Inventaris elemen** di sheet Snap (3.4d) — urutan listing.
+2. **Component ID numbering** di Field Matrix (7) — Component ID pertama = elemen paling kiri-atas.
+3. **Business Rule numbering** (6) — Rule pertama = dari elemen screen-level/paling kiri-atas, baru turun ke komponen berikutnya sesuai urutan yang sama.
+4. **Narrative panel** di sheet Redrawn (3.4e) — urutan baris narasi.
+
+**Teks verbatim (berlaku di semua tempat di atas)**: disalin PERSIS dari sumber, termasuk singkatan/istilah yang terlihat tidak baku (mis. "Active/Deactive"). DILARANG KERAS "mengoreksi" ejaan/istilah/singkatan yang terlihat janggal — itu requirement asli, bukan typo. Kalau genuinely tidak terbaca/ambigu, tandai lewat Ambiguity Handling (3.3b), JANGAN ditebak jadi versi "yang lebih benar" menurut agent.
+
+## 3.4d Element Inventory (WAJIB, isi VISIBLE di sheet `_Snap`, bukan cuma langkah kerja internal)
+Sheet `_Snap` berisi: (1) bukti asli (gambar embed / reproduksi teks, lihat 3.4) DAN (2) **inventaris elemen** sebagai konten yang benar-benar terlihat di sheet — bukan sekadar tahap kerja internal yang dibuang. Tujuan: user bisa langsung cek "agent baca sumber dengan benar atau tidak" tanpa harus bandingkan manual ke sheet lain.
+Inventaris sesederhana mungkin, mengikuti Traversal Order (3.4c), berisi untuk SETIAP elemen: teks verbatim, tipe elemen (termasuk elemen KECIL/dekoratif seperti icon pensil, box info sekunder — paling sering terlewat kalau tidak didata eksplisit), dan section/grouping asalnya. TIDAK perlu detail spec lengkap di sini (itu tugas narrative panel 3.4e dan spec formal) — cukup catatan mentah "apa yang terlihat, di mana".
+
+## 3.4e Narrative Spec Panel (WAJIB, isi panel kanan sheet `_Redr` — format baku, bukan opsional)
+Panel kanan setiap sheet `_Redr` (lihat 23 untuk layout teknis) berisi **narasi terstruktur** hasil formalisasi dari inventaris (3.4d) — BUKAN ditulis ulang dari sumber secara independen (mencegah 2 sumber kebenaran yang bisa kontradiksi, lihat 3.4f).
+**Struktur**: dikelompokkan per section sesuai layout asli (mis. "Main Page" → "Filter Header" → "Tools/Trigger" → "List View Kolom"), setiap section berisi header ringkas (screen-level: deskripsi, user akses, kondisi awal muncul) lalu daftar `Kolom | Spec` per elemen, urutan sesuai Traversal Order (3.4c).
+**Format tiap baris**: `[Nama Elemen] | [1 kalimat padat menggabungkan tipe + format/opsi + default + behaviour + ketergantungan ke elemen lain]`. Contoh: `Periode Start | Datepicker ; required ; format=dd/mm/yyyy ; default=tgl.sistem ; minimum=tgl.sistem ; maksimum=31/12/2099`.
+**No-duplikasi dengan Tools**: trigger/icon yang SUDAH dijelaskan di section Tools/Trigger TIDAK diulang lagi di List View Kolom — meskipun posisi visualnya menempel di dalam grid (mis. icon Edit/View per row). Cukup dijelaskan 1 kali di tempat pertama kemunculannya sesuai Traversal Order.
+
+## 3.4f Depth Balance — Narasi vs Spec Formal (WAJIB, mencegah duplikasi DAN mencegah dangkal sepihak)
+Narrative panel (3.4e) dan sheet spec formal (Field Matrix/Business Rules/dst) menjelaskan FAKTA YANG SAMA dalam 2 bentuk berbeda untuk 2 audiens berbeda (BA baca narasi, developer baca spec formal) — bukan 2 sumber independen. Aturan keseimbangan kedalaman:
+* Spec formal WAJIB **minimal setara** kedalamannya dengan narasi — boleh lebih detail (row-explosion Mode×Status, domain checklist, dst), TIDAK BOLEH lebih dangkal.
+* Narasi TIDAK BOLEH lebih detail dari spec formal — kalau narasi sudah sebut suatu behaviour/constraint, spec formal WAJIB memuat fakta yang sama (dalam bentuk terstruktur), bukan sebaliknya jadi "narasi tahu lebih banyak dari spec".
+* Kalau ada revisi/koreksi, mulai dari inventaris (3.4d) atau narasi (3.4e) sebagai sumber, baru spec formal menyesuaikan — bukan sebaliknya, supaya tidak ada 2 versi kebenaran berbeda.
+* Standar kelengkapan spec formal (row-explosion, domain checklist Business Rules 6.2, 10 domain Critical Challenge, dst) TETAP WAJIB penuh seperti sebelumnya — narasi TIDAK menggantikan kedalaman ini, cuma jadi lapisan ringkasan+bukti-baca di atasnya.
+
 ## 3.5 Aturan teknis cell-drawing (WAJIB — dipakai di SETIAP sheet `[KODE]_[Screen]_Redrawn`)
 Berlaku untuk sheet Redrawn yang WAJIB selalu dibuat (lihat 3.4). Ini SEMUA wajib dieksekusi sebagai kode (openpyxl), bukan sekadar disebut:
 * **Lebar kolom seragam 2,57** (`column_dimensions[col].width = 2.57`) di SELURUH kolom yang menjadi area desain UI — konsisten dari kiri ke kanan, tidak ada kolom lebih lebar/sempit di tengah area.

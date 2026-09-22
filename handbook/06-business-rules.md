@@ -1,7 +1,7 @@
 # 6. Business Rules dan Conditional Logic
 
 ## 6.1 Struktur rule
-* Rule ID: BR-[MODULE]-[NNN]
+* Rule ID: BR-[MODULE]-[NNN] — penomoran NNN WAJIB ikut Traversal Order (3.4c): dimulai dari rule screen-level, lalu turun ke komponen sesuai urutan kiri-atas→kanan→turun, bukan urutan bebas.
 * Name: Nama singkat yang stabil
 * Source/Status: Confirmed, Observed, Inferred, Proposed, Assumption
 * **Sumber**: `Requirement Asli` / `Auto-Applied dari WF-xxx` / `Auto-Applied dari CQ-xxx` — supaya reviewer langsung tahu asal-usul rule tanpa cross-reference manual (lihat 14.4c).

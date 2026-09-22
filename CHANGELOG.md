@@ -1,5 +1,21 @@
 # Changelog
 
+## Addendum ke-5 pasca-v2.9 (tanpa bump versi) — Restrukturisasi Besar
+Hasil diskusi mendalam menyelaraskan metodologi engine dengan cara kerja manual traversal (kiri-atas→kanan→turun, 1x baca menghasilkan component+spec+business rule sekaligus). Perubahan struktural terbesar sejak v2.9:
+* **Traversal Order** (3.4c, baru): urutan baca kiri-atas→kanan→turun WAJIB konsisten di Element Inventory, Component ID numbering (7.3), Business Rule numbering (6.1), dan Narrative Spec Panel — sebelumnya tidak ada aturan urutan eksplisit sama sekali.
+* **Element Inventory pindah jadi VISIBLE CONTENT di sheet `_Snap`** (3.4d) — sebelumnya cuma langkah kerja internal (3.4c versi lama), sekarang harus benar-benar terlihat di sheet supaya user bisa cross-check langsung.
+* **Narrative Spec Panel** (3.4e, baru) — format `Kolom | Spec` (1 kalimat padat per elemen, dikelompokkan per section) sebagai isi PANEL KANAN sheet `_Redr` — formalisasi dari inventaris, bukan ditulis ulang independen. No-duplikasi trigger yang sudah dijelaskan di Tools tidak diulang di List View Kolom.
+* **Depth Balance** (3.4f, baru) — narasi ≤ spec formal; spec formal WAJIB minimal setara, tidak boleh jauh lebih dangkal. Mencegah 2 sumber kebenaran berbeda.
+* **Mode Duplikasi jadi FORMAT BAKU WAJIB** (handbook 23 ditulis ulang) — Mode Terpisah DIHAPUS total, bukan pilihan lagi. Menghapus 1 dari 2 dimensi konfirmasi mode (21.3 update) — sekarang hanya Enterprise/Simple yang perlu dikonfirmasi.
+* **Urutan sheet workbook diubah total** (17.1): dari per-modul berselang-seling (Snap1-Redr1-Spec1-Snap2...) menjadi PER JENIS dikelompokkan (Index_Summary → semua Snap → semua Redrawn → semua Spec Formal → lintas-modul).
+* Self-Audit Pass (20.2) dapat 4 item checklist baru sesuai semua di atas.
+* Prinsip eksplisit: contoh spesifik yang dipakai selama diskusi (nama modul tertentu) TIDAK di-hardcode ke handbook — hanya pola umum yang dibakukan.
+
+## Addendum ke-4 pasca-v2.9 (tanpa bump versi)
+Ditemukan pola kegagalan baru dari hasil produksi nyata (bandingkan mockup asli vs hasil Copilot Studio): urutan/pengelompokan elemen berubah, teks diparafrase/"dikoreksi" (mis. "Active/Deactive" jadi "Activate/Deactivate"), elemen kecil (icon, box sekunder) hilang total.
+* **Element Inventory Extraction** (3.4c, baru): langkah WAJIB terpisah SEBELUM kode redraw ditulis — susun inventaris eksplisit (teks verbatim, tipe, posisi/urutan/grouping asli) dari sumber, kode redraw HANYA boleh mengiterasi inventaris ini, bukan disusun bebas dari kesan visual langsung. Menerapkan prinsip evidence classification (3.3) yang sebelumnya cuma berlaku untuk requirement teks, sekarang juga untuk elemen visual.
+* Self-Audit Pass (20) dapat item checklist baru: cross-check redraw vs inventaris (kelengkapan, verbatim, urutan/grouping).
+
 ## Addendum ke-3 pasca-v2.9 (tanpa bump versi)
 Berdasarkan sesi mock-up validasi visual langsung di Excel (3 iterasi kalibrasi) — 2 bug produksi nyata ditemukan dan diperbaiki di sumbernya, bukan cuma di mockup:
 * **Bug border box** (3.5a, baru): implementasi lama menimpa sisi atas kotak dengan sisi bawah di cell yang sama untuk box 1-baris (r1==r2), membuat tombol/header terlihat bocor tanpa sisi atas. Algoritma pengganti (1 assignment per cell, gabungkan semua sisi sekaligus) dibakukan sebagai kode wajib, bukan cuma deskripsi.

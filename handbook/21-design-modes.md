@@ -19,5 +19,5 @@ Claude memberi REKOMENDASI otomatis berdasarkan heuristik:
 
 TAPI user WAJIB konfirmasi eksplisit sebelum generate jalan — jangan salah klasifikasi diam-diam. Ini konsisten dengan prinsip 3.3b (Ambiguity Handling): penentuan mode sendiri adalah keputusan yang bisa ambigu, jadi tidak boleh diputuskan sepihak tanpa konfirmasi.
 
-## 21.3 Dimensi Mode Kedua — Layout Redrawn (terpisah dari 21.1/21.2)
-Selain Mode Enterprise/Simple (kedalaman konten), ada dimensi mode KEDUA yang independen: **Layout Redrawn** (Mode Duplikasi vs Mode Terpisah) — lihat handbook 23 untuk detail lengkap. Kedua dimensi ini WAJIB dikonfirmasi terpisah sebelum generate — user bisa pilih kombinasi apa saja (mis. Enterprise + Terpisah, atau Simple + Duplikasi).
+## 21.3 Catatan: Layout Redrawn BUKAN dimensi mode lagi
+Sebelumnya ada dimensi mode kedua (Layout Redrawn: Duplikasi vs Terpisah) yang perlu dikonfirmasi terpisah. Sekarang **dihapus** — panel spec kanan di sheet `_Redr` (handbook 23) adalah format baku wajib untuk semua screen, tidak perlu dikonfirmasi. Hanya Mode Enterprise/Simple (21.1/21.2) yang tersisa sebagai konfirmasi wajib sebelum generate.
